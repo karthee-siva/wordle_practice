@@ -56,7 +56,19 @@ if 'guess_colors_to_date' not in st.session_state:
     st.session_state.guess_colors_to_date = []
 if 'guess_counter' not in st.session_state:
     st.session_state.guess_counter = 0
+if 'reset_needed' not in st.session_state:
+    st.session_state.reset_needed = 0
 
+# see answer word
+with st.form(key="form for answer"):
+    if st.form_submit_button(label="Reveal answer"):
+        st.text("Answer: " + st.session_state.answer_word)
+        
+        # everyone should have sidebar of words
+        for i in range(len(st.session_state.guesses_to_date)):
+            for j in range(len(st.session_state.guesses_to_date[i])):
+                with cols_list[j]:
+                    st.markdown(f'<h1 style="background-color:{st.session_state.guess_colors_to_date[i][j]};color:black;font-size:18px;border-radius:5%;"><center>{st.session_state.guesses_to_date[i][j]}</center></h1></br>', unsafe_allow_html=True)
 
 with st.form(key="guess_form"):
     
@@ -71,8 +83,16 @@ with st.form(key="guess_form"):
         guess_validity = backend.in_dictionary(guess,dat)
         
         # only proceed if valid guess
-        if (guess_validity):
+        if (guess_validity==False):
+            st.text("Please enter a real 5 letter lowercase word to proceed.")
             
+            # everyone should still have sidebar of words
+            for i in range(len(st.session_state.guesses_to_date)):
+                for j in range(len(st.session_state.guesses_to_date[i])):
+                    with cols_list[j]:
+                        st.markdown(f'<h1 style="background-color:{st.session_state.guess_colors_to_date[i][j]};color:black;font-size:18px;border-radius:5%;"><center>{st.session_state.guesses_to_date[i][j]}</center></h1></br>', unsafe_allow_html=True)
+        
+        else:
             # increase counter of guesses by 1
             st.session_state.guess_counter += 1
             
@@ -81,46 +101,25 @@ with st.form(key="guess_form"):
             guess_colors = backend.give_colors(guess,st.session_state.answer_word,perfect,move_spot,absent)
             st.session_state.guess_colors_to_date.append(guess_colors)
             
+            # everyone should still have sidebar of words
+            for i in range(len(st.session_state.guesses_to_date)):
+                for j in range(len(st.session_state.guesses_to_date[i])):
+                    with cols_list[j]:
+                        st.markdown(f'<h1 style="background-color:{st.session_state.guess_colors_to_date[i][j]};color:black;font-size:18px;border-radius:5%;"><center>{st.session_state.guesses_to_date[i][j]}</center></h1></br>', unsafe_allow_html=True)
+                        
             # see if user has won yet, if they win say Congrats and reset
             win_check = backend.check_win(guess_colors,win_colors)
             if win_check == True:
                 st.sidebar.text("Congrats!")
-                st.sidebar.text("Answer: " + st.session_state.answer_word)
-                st.sidebar.text("Play again with a new word")
-                for key in st.session_state.keys():
-                    del st.session_state[key]
-            
-        # ensure guess is valid
-        else:
-            st.text("Please enter a real 5 letter lowercase word to proceed.")
-            
-        # everyone should have sidebar of words
-        for i in range(len(st.session_state.guesses_to_date)):
-            for j in range(len(st.session_state.guesses_to_date[i])):
-                with cols_list[j]:
-                    st.markdown(f'<h1 style="background-color:{st.session_state.guess_colors_to_date[i][j]};color:black;font-size:18px;border-radius:5%;"><center>{st.session_state.guesses_to_date[i][j]}</center></h1></br>', unsafe_allow_html=True)
-        
-        # if guess_counter hits 6, reset
-        if st.session_state.guess_counter == 6:
-            st.sidebar.text("Answer: " + st.session_state.answer_word)
-            st.sidebar.text("Play again with a new word")
-            for key in st.session_state.keys():
-                del st.session_state[key]
+                st.session_state.reset_needed = 1
 
-# see answer word
-with st.form(key="form for answer"):
-    if st.form_submit_button(label="Reveal answer"):
-        st.text("Answer: " + st.session_state.answer_word)
-        
-        # everyone should have sidebar of words
-        for i in range(len(st.session_state.guesses_to_date)):
-            for j in range(len(st.session_state.guesses_to_date[i])):
-                with cols_list[j]:
-                    st.markdown(f'<h1 style="background-color:{st.session_state.guess_colors_to_date[i][j]};color:black;font-size:18px;border-radius:5%;"><center>{st.session_state.guesses_to_date[i][j]}</center></h1></br>', unsafe_allow_html=True)
-        
-        
-# don't include a refresh in the app as they can do it from the web anyway. Old code below
-#    if st.form_submit_button(label="Play again?"):
-#        for key in st.session_state.keys():
-#            del st.session_state[key]
+# if guess_counter hits 6, reset
+if st.session_state.guess_counter == 6:
+    st.session_state.reset_needed = 1
 
+# reset game
+if st.session_state.reset_needed == 1:
+    st.sidebar.text("Answer: " + st.session_state.answer_word)
+    st.sidebar.text("Play again with a new word")
+    for key in st.session_state.keys():
+        del st.session_state[key]
