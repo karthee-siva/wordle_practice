@@ -7,7 +7,7 @@ from streamlit import caching
 from wordle_backend import wordle_backend
 
 # landing page
-st.title("Wordle")
+st.title("Wordle Practice")
 st.text("by Tejal Patwardhan")
 
 with st.expander("Rules"):
