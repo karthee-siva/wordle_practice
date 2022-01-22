@@ -7,15 +7,18 @@ from streamlit import caching
 from wordle_backend import wordle_backend
 
 # landing page
-st.title("Wordle Practice")
-st.text("by Tejal Patwardhan")
+st.set_page_config(page_title="Wordle Sandbox", page_icon=":book:", layout="centered", initial_sidebar_state="expanded", menu_items=None)
+st.sidebar.title("Wordle Practice")
+st.sidebar.text("by Tejal Patwardhan")
 
-with st.expander("Rules"):
+with st.sidebar.expander("Rules"):
      st.text("""
-        * Letter in the right place is green
-        * Letter in the wrong place is yellow
-        * Letter not in the answer is grey
-     """)
+        Guess the answer in 6 tries.
+        Letters will be color-coded:
+        * Green: Letter placed correctly
+        * Yellow: Letter in wrong place
+        * Grey: Wrong letter
+        """)
 
 
 # load in backend
@@ -45,8 +48,11 @@ dat = dat['Word'].tolist()
 if 'answer_word' not in st.session_state:
     st.session_state.answer_word = backend.create_answer(dat,target_word_len)
 
+# initialize container for guessing
+form_container = st.container()
+
 # initialize grid for letters
-col1, col2, col3, col4, col5 = st.sidebar.columns(5)
+col1, col2, col3, col4, col5 = st.columns(5)
 cols_list = [col1, col2, col3, col4, col5]
 
 # store letters/colors guessed so far
@@ -59,22 +65,11 @@ if 'guess_counter' not in st.session_state:
 if 'reset_needed' not in st.session_state:
     st.session_state.reset_needed = 0
 
-# see answer word
-with st.form(key="form for answer"):
-    if st.form_submit_button(label="Reveal answer"):
-        st.text("Answer: " + st.session_state.answer_word)
-        
-        # everyone should have sidebar of words
-        for i in range(len(st.session_state.guesses_to_date)):
-            for j in range(len(st.session_state.guesses_to_date[i])):
-                with cols_list[j]:
-                    st.markdown(f'<h1 style="background-color:{st.session_state.guess_colors_to_date[i][j]};color:black;font-size:18px;border-radius:5%;"><center>{st.session_state.guesses_to_date[i][j]}</center></h1></br>', unsafe_allow_html=True)
-
-with st.form(key="guess_form"):
+# guess a word
+with form_container.form(key="guess_form"):
     
-    # user can guess a word and submit
-    guess = st.text_input("Guess a 5 letter lowercase word")
-    st.text(f"(Example: payer)")
+    # submit guess
+    guess = st.text_input("Guess a 5 letter lowercase word, e.g., 'payer'")
     submit_button = st.form_submit_button(label='Submit guess')
 
     if submit_button:
@@ -112,6 +107,17 @@ with st.form(key="guess_form"):
             if win_check == True:
                 st.sidebar.text("Congrats!")
                 st.session_state.reset_needed = 1
+
+# see answer word
+with st.sidebar.form(key="form for answer"):
+    if st.form_submit_button(label="Reveal answer"):
+        st.text("Answer: " + st.session_state.answer_word)
+        
+        # everyone should have sidebar of words
+        for i in range(len(st.session_state.guesses_to_date)):
+            for j in range(len(st.session_state.guesses_to_date[i])):
+                with cols_list[j]:
+                    st.markdown(f'<h1 style="background-color:{st.session_state.guess_colors_to_date[i][j]};color:black;font-size:18px;border-radius:5%;"><center>{st.session_state.guesses_to_date[i][j]}</center></h1></br>', unsafe_allow_html=True)
 
 # if guess_counter hits 6, reset
 if st.session_state.guess_counter == 6:
