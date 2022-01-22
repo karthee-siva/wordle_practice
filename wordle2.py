@@ -69,7 +69,7 @@ if 'reset_needed' not in st.session_state:
 with form_container.form(key="guess_form"):
     
     # submit guess
-    guess = st.text_input("Guess a 5 letter lowercase word, e.g., 'payer'")
+    guess = st.text_input("Guess a 5 letter word, e.g., 'payer'").lower()
     submit_button = st.form_submit_button(label='Submit guess')
 
     if submit_button:
@@ -79,7 +79,7 @@ with form_container.form(key="guess_form"):
         
         # only proceed if valid guess
         if (guess_validity==False):
-            st.text("Please enter a real 5 letter lowercase word to proceed.")
+            st.text("Please enter a real 5 letter word to proceed.")
             
             # everyone should still have sidebar of words
             for i in range(len(st.session_state.guesses_to_date)):
