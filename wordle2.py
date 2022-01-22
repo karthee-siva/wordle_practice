@@ -8,7 +8,7 @@ from wordle_backend import wordle_backend
 
 # landing page
 st.set_page_config(page_title="Wordle Sandbox", page_icon=":book:", layout="centered", initial_sidebar_state="expanded", menu_items=None)
-st.sidebar.title("Wordle Practice")
+st.sidebar.title("Wordle Practice - Desktop Only")
 st.sidebar.text("by Tejal Patwardhan")
 
 with st.sidebar.expander("Rules"):
