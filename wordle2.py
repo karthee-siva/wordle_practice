@@ -1,21 +1,24 @@
+# import packages
 import numpy as np
 import pandas as pd
 import random
 import streamlit as st
+from streamlit import caching
 from wordle_backend import wordle_backend
 
+# landing page
 st.title("Wordle")
 st.text("by Tejal Patwardhan")
 
-st.markdown(""" 
+with st.expander("Rules"):
+     st.text("""
+        * Letter in the right place is green
+        * Letter in the wrong place is yellow
+        * Letter not in the answer is grey
+     """)
 
-## Rules:
-* Letter in the right place is green
-* Letter in the wrong place is yellow
-* Letter not in the answer is grey
 
-""")
-
+# load in backend
 backend = wordle_backend()
 
 # upload list of all scrabble words
@@ -24,9 +27,9 @@ dat.columns = ["Word"]
 dat["Word"] = dat["Word"].astype('str')
 
 # color code the guess
-perfect = "green"
-move_spot = "yellow"
-absent = "grey"
+perfect = "#6aaa64" #"green"
+move_spot = "#c9b458" #yellow"
+absent = "#787c7e" #"grey"
 
 # win condition
 win_colors = [perfect, perfect, perfect, perfect, perfect]
@@ -38,36 +41,86 @@ target_word_len = 5
 dat = dat[dat['Word'].apply(lambda x: len(x)==target_word_len)]
 dat = dat['Word'].tolist()
 
-answer_word = backend.create_answer(dat,target_word_len)
+# create answer
+if 'answer_word' not in st.session_state:
+    st.session_state.answer_word = backend.create_answer(dat,target_word_len)
 
-with st.form(key="form"):
-    guess = st.text_input("Guess a 5 letter word")
+# initialize grid for letters
+col1, col2, col3, col4, col5 = st.sidebar.columns(5)
+cols_list = [col1, col2, col3, col4, col5]
+
+# store letters/colors guessed so far
+if 'guesses_to_date' not in st.session_state:
+    st.session_state.guesses_to_date = []
+if 'guess_colors_to_date' not in st.session_state:
+    st.session_state.guess_colors_to_date = []
+if 'guess_counter' not in st.session_state:
+    st.session_state.guess_counter = 0
+
+
+with st.form(key="guess_form"):
+    
+    # user can guess a word and submit
+    guess = st.text_input("Guess a 5 letter lowercase word")
     st.text(f"(Example: payer)")
-
     submit_button = st.form_submit_button(label='Submit guess')
 
     if submit_button:
-        with st.spinner("Determining validity..."):
-            guess_validity = backend.in_dictionary(guess,dat)
-        st.text("Guess validity: ")
-        st.text(guess_validity)
+    
+        # check whether guess is in dictionary of valid guesses
+        guess_validity = backend.in_dictionary(guess,dat)
         
+        # only proceed if valid guess
         if (guess_validity):
-            guess_colors = backend.give_colors(guess,answer_word,perfect,move_spot,absent)
-            st.markdown("____")
-            st.text("Colors for your guess: ")
-            st.text(guess_colors)
             
-            st.text("Did you guess the wordle?")
+            # increase counter of guesses by 1
+            st.session_state.guess_counter += 1
+            
+            # add guess and guess colors to session state
+            st.session_state.guesses_to_date.append(guess)
+            guess_colors = backend.give_colors(guess,st.session_state.answer_word,perfect,move_spot,absent)
+            st.session_state.guess_colors_to_date.append(guess_colors)
+            
+            # see if user has won yet, if they win say Congrats and reset
             win_check = backend.check_win(guess_colors,win_colors)
-            st.text(win_check)
+            if win_check == True:
+                st.sidebar.text("Congrats!")
+                st.sidebar.text("Answer: " + st.session_state.answer_word)
+                st.sidebar.text("Play again with a new word")
+                for key in st.session_state.keys():
+                    del st.session_state[key]
             
-            
-            
+        # ensure guess is valid
         else:
-            st.text("Please enter a real 5 letter word to proceed.")
+            st.text("Please enter a real 5 letter lowercase word to proceed.")
+            
+        # everyone should have sidebar of words
+        for i in range(len(st.session_state.guesses_to_date)):
+            for j in range(len(st.session_state.guesses_to_date[i])):
+                with cols_list[j]:
+                    st.markdown(f'<h1 style="background-color:{st.session_state.guess_colors_to_date[i][j]};color:black;font-size:18px;border-radius:5%;"><center>{st.session_state.guesses_to_date[i][j]}</center></h1></br>', unsafe_allow_html=True)
+        
+        # if guess_counter hits 6, reset
+        if st.session_state.guess_counter == 6:
+            st.sidebar.text("Answer: " + st.session_state.answer_word)
+            st.sidebar.text("Play again with a new word")
+            for key in st.session_state.keys():
+                del st.session_state[key]
 
-
+# see answer word
 with st.form(key="form for answer"):
-    if st.form_submit_button(label='Reveal answer'):
-        st.text("Answer: " + answer_word)
+    if st.form_submit_button(label="Reveal answer"):
+        st.text("Answer: " + st.session_state.answer_word)
+        
+        # everyone should have sidebar of words
+        for i in range(len(st.session_state.guesses_to_date)):
+            for j in range(len(st.session_state.guesses_to_date[i])):
+                with cols_list[j]:
+                    st.markdown(f'<h1 style="background-color:{st.session_state.guess_colors_to_date[i][j]};color:black;font-size:18px;border-radius:5%;"><center>{st.session_state.guesses_to_date[i][j]}</center></h1></br>', unsafe_allow_html=True)
+        
+        
+# don't include a refresh in the app as they can do it from the web anyway. Old code below
+#    if st.form_submit_button(label="Play again?"):
+#        for key in st.session_state.keys():
+#            del st.session_state[key]
+

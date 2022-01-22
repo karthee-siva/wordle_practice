@@ -2,11 +2,11 @@
 import numpy as np
 import pandas as pd
 import random
+import streamlit as st
 
 
 class wordle_backend:
-        
-    def create_answer(self,dat,target_word_len):
+    def create_answer(_self,dat,target_word_len):
         """Return  answer word, which can't just be a 4 letter word with an "s" at the end; for now, no duplicate letters either"""
         answer_word = random.choice(dat)
         while answer_word[-1]=="s" or len(set(answer_word)) != target_word_len:
@@ -21,7 +21,6 @@ class wordle_backend:
         else:
             return(False)
             
-    # return colors for guess
     def give_colors(self,guess,answer_word,perfect,move_spot,absent):
         """Returns colors for each letter of guess based on presence in answer_word"""
         guess_colors = []
