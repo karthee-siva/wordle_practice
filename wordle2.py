@@ -28,7 +28,7 @@ backend = wordle_backend()
 target_word_len = 5
 
 # upload list of all 5-letter scrabble words for wordle
-dat = pd.read_csv("5_letter_scrabble",header=None)
+dat = pd.read_csv("5_letter_scrabble.csv",header=None)
 dat.columns = ["Word"]
 dat["Word"] = dat["Word"].astype('str')
 dat = dat['Word'].tolist()
