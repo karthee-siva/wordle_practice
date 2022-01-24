@@ -81,11 +81,11 @@ with form_container.form(key="guess_form"):
         if (guess_validity==False):
             st.text("Please enter a real 5 letter word to proceed.")
             
-            # everyone should still have sidebar of words
+            # everyone should still see words
             for i in range(len(st.session_state.guesses_to_date)):
                 for j in range(len(st.session_state.guesses_to_date[i])):
                     with cols_list[j]:
-                        st.markdown(f'<h1 style="background-color:{st.session_state.guess_colors_to_date[i][j]};color:black;font-size:5px;border-radius:5%;"><center>{st.session_state.guesses_to_date[i][j]}</center></h1></br>', unsafe_allow_html=True)
+                        st.markdown(f'<h1 style="background-color:{st.session_state.guess_colors_to_date[i][j]};color:black;font-size:18px;border-radius:5%;"><center>{st.session_state.guesses_to_date[i][j]}</center></h1></br>', unsafe_allow_html=True)
         
         else:
             # increase counter of guesses by 1
@@ -96,7 +96,7 @@ with form_container.form(key="guess_form"):
             guess_colors = backend.give_colors(guess,st.session_state.answer_word,perfect,move_spot,absent)
             st.session_state.guess_colors_to_date.append(guess_colors)
             
-            # everyone should still have sidebar of words
+            # everyone should still see words
             for i in range(len(st.session_state.guesses_to_date)):
                 for j in range(len(st.session_state.guesses_to_date[i])):
                     with cols_list[j]:
@@ -113,7 +113,7 @@ with st.sidebar.form(key="form for answer"):
     if st.form_submit_button(label="Reveal answer"):
         st.text("Answer: " + st.session_state.answer_word)
         
-        # everyone should have sidebar of words
+        # everyone should still see words
         for i in range(len(st.session_state.guesses_to_date)):
             for j in range(len(st.session_state.guesses_to_date[i])):
                 with cols_list[j]:
