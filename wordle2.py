@@ -24,10 +24,14 @@ with st.sidebar.expander("Rules"):
 # load in backend
 backend = wordle_backend()
 
-# upload list of words from Scrabble word dictionary
-dat = pd.read_csv("scrabbledictionary.csv",header=None)
+# use only 5-letter words
+target_word_len = 5
+
+# upload list of all 5-letter scrabble words for wordle
+dat = pd.read_csv("5_letter_scrabble",header=None)
 dat.columns = ["Word"]
 dat["Word"] = dat["Word"].astype('str')
+dat = dat['Word'].tolist()
 
 # color code the guess
 perfect = "#6aaa64" #"green"
@@ -36,13 +40,6 @@ absent = "#787c7e" #"grey"
 
 # win condition
 win_colors = [perfect, perfect, perfect, perfect, perfect]
-
-# use only 5-letter words
-target_word_len = 5
-
-# ensure dictionary only has target length words and convert to list
-dat = dat[dat['Word'].apply(lambda x: len(x)==target_word_len)]
-dat = dat['Word'].tolist()
 
 # create answer
 if 'answer_word' not in st.session_state:
@@ -87,6 +84,7 @@ with form_container.form(key="guess_form"):
                     with cols_list[j]:
                         st.markdown(f'<h1 style="background-color:{st.session_state.guess_colors_to_date[i][j]};color:black;font-size:18px;border-radius:5%;"><center>{st.session_state.guesses_to_date[i][j]}</center></h1></br>', unsafe_allow_html=True)
         
+        # for valid guesses:
         else:
             # increase counter of guesses by 1
             st.session_state.guess_counter += 1
