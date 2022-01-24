@@ -6,6 +6,9 @@ import streamlit as st
 from streamlit import caching
 from wordle_backend import wordle_backend
 
+# Set URL
+url = "https://wordle-practice.herokuapp.com/"
+
 # landing page
 st.set_page_config(page_title="Wordle Sandbox", page_icon=":book:", layout="centered", initial_sidebar_state="expanded", menu_items=None)
 st.sidebar.title("Wordle Practice - Desktop Only")
@@ -124,6 +127,6 @@ if st.session_state.guess_counter == 6:
 # reset game
 if st.session_state.reset_needed == 1:
     st.sidebar.text("Answer: " + st.session_state.answer_word)
-    st.sidebar.text("Play again with a new word")
+    st.sidebar.text("[Play again with a new word](%s)" % url)
     for key in st.session_state.keys():
         del st.session_state[key]
