@@ -127,6 +127,6 @@ if st.session_state.guess_counter == 6:
 # reset game
 if st.session_state.reset_needed == 1:
     st.sidebar.text("Answer: " + st.session_state.answer_word)
-    st.sidebar.text("[Play again with a new word](%s)" % url)
+    st.sidebar.write("[Play again with a new word](%s)" % url)
     for key in st.session_state.keys():
         del st.session_state[key]
