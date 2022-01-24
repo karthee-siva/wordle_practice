@@ -119,7 +119,7 @@ with st.sidebar.form(key="form for answer"):
             for j in range(len(st.session_state.guesses_to_date[i])):
                 with cols_list[j]:
                     st.markdown(f'<h1 style="background-color:{st.session_state.guess_colors_to_date[i][j]};color:black;font-size:18px;border-radius:5%;"><center>{st.session_state.guesses_to_date[i][j]}</center></h1></br>', unsafe_allow_html=True)
-
+                    
 # if guess_counter hits 6, reset
 if st.session_state.guess_counter == 6:
     st.session_state.reset_needed = 1
@@ -127,6 +127,8 @@ if st.session_state.guess_counter == 6:
 # reset game
 if st.session_state.reset_needed == 1:
     st.sidebar.text("Answer: " + st.session_state.answer_word)
-    st.sidebar.write("[Play again with a new word](%s)" % url)
     for key in st.session_state.keys():
         del st.session_state[key]
+     
+# give everyone option to play again
+st.sidebar.write("[Play again with a new word](%s)" % url)
