@@ -24,7 +24,7 @@ with st.sidebar.expander("Rules"):
 # load in backend
 backend = wordle_backend()
 
-# upload list of all scrabble words
+# upload list of words from Scrabble word dictionary
 dat = pd.read_csv("scrabbledictionary.csv",header=None)
 dat.columns = ["Word"]
 dat["Word"] = dat["Word"].astype('str')
