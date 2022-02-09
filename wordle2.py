@@ -22,6 +22,7 @@ with st.sidebar.expander("Rules"):
         * Yellow: Letter in wrong place
         * Grey: Wrong letter
         """)
+     st.text("")
      st.write("Video walkthrough [here](https://www.loom.com/share/6de6907efc4b4f348fc850fd75b18e66).")
 
 
