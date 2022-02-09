@@ -15,13 +15,14 @@ st.sidebar.title("Wordle Practice - Desktop Only")
 st.sidebar.text("by Tejal Patwardhan")
 
 with st.sidebar.expander("Rules"):
-     st.text("""
+     st.write("""
         Guess the answer in 6 tries.
         Letters will be color-coded:
         * Green: Letter placed correctly
         * Yellow: Letter in wrong place
         * Grey: Wrong letter
         """)
+     st.write("Video walkthrough [here](https://www.loom.com/share/6de6907efc4b4f348fc850fd75b18e66).")
 
 
 # load in backend
