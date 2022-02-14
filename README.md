@@ -6,4 +6,4 @@ Practice playing wordle on your desktop. Unlimited tries per day.
 
 Just for fun!
 
-Inspired by: https://www.powerlanguage.co.uk/wordle/
+Inspired by Josh Wardle: https://www.powerlanguage.co.uk/wordle/
