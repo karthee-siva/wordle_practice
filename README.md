@@ -7,3 +7,5 @@ Practice playing wordle on your desktop. Unlimited tries per day.
 Just for fun!
 
 Inspired by Josh Wardle: https://www.nytimes.com/games/wordle/index.html
+
+**updated after Heroku changes
